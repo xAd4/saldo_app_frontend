@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../hooks/useAppDispatch";
-import { loginStart, loginFailure, clearError } from "../slices/authSlice";
+import { useAuthStore } from "../hooks/useAuthStore";
 
 export default function LoginPage() {
-  const dispatch = useAppDispatch();
-  const { isLoading, error } = useAppSelector((state) => state.auth);
+  const { isLoadingAuth, errorMessage, startLogin, clearError } =
+    useAuthStore();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -19,18 +18,18 @@ export default function LoginPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(clearError());
+    clearError();
 
     if (!formData.email || !formData.password) {
-      dispatch(loginFailure("Todos los campos son requeridos"));
       return;
     }
 
-    dispatch(loginStart());
-    // TODO: Conectar con API
-    console.log("Login:", formData);
+    await startLogin({
+      email: formData.email,
+      password: formData.password,
+    });
   };
 
   return (
@@ -107,7 +106,7 @@ export default function LoginPage() {
             style={{ padding: '48px 40px', backgroundColor: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.08)' }}
           >
             {/* Error message */}
-            {error && (
+            {errorMessage && (
               <div className="rounded-2xl flex items-start gap-3" style={{ marginBottom: 32, padding: 16, backgroundColor: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.15)' }}>
                 <svg
                   className="w-5 h-5 text-red-400 shrink-0 mt-0.5"
@@ -123,7 +122,7 @@ export default function LoginPage() {
                   />
                 </svg>
                 <span className="text-red-400 text-sm leading-relaxed">
-                  {error}
+                  {errorMessage}
                 </span>
               </div>
             )}
@@ -298,14 +297,14 @@ export default function LoginPage() {
             {/* Submit button */}
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoadingAuth}
               className="relative w-full rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white font-semibold text-[15px] hover:from-emerald-400 hover:via-teal-400 hover:to-cyan-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-emerald-500/20 hover:shadow-xl hover:shadow-emerald-500/30 hover:-translate-y-0.5 active:translate-y-0 overflow-hidden group/btn"
               style={{ marginTop: 32, padding: '16px 16px' }}
             >
               {/* Shimmer effect on hover */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover/btn:opacity-100 group-hover/btn:animate-shimmer bg-[length:200%_100%] transition-opacity duration-300" />
               <span className="relative flex items-center justify-center gap-2">
-                {isLoading ? (
+                {isLoadingAuth ? (
                   <>
                     <svg
                       className="w-5 h-5 animate-spin-slow"

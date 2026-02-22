@@ -102,3 +102,59 @@ select option {
 .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
 .animate-spin-slow { animation: spin-slow 1s linear infinite; }
 .animate-grid-fade { animation: grid-fade 5s ease-in-out infinite; }
+
+/* ===== SweetAlert2 Premium Dark Theme ===== */
+
+.swal2-popup.swal-premium-popup {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 1.5rem !important;
+  max-width: 420px;
+}
+
+.swal-premium-popup .swal2-title.swal-premium-title {
+  display: none !important;
+}
+
+.swal-premium-popup .swal2-html-container.swal-premium-html {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.swal-premium-popup .swal2-icon {
+  display: none !important;
+}
+
+.swal-premium-popup .swal2-actions {
+  display: none !important;
+}
+
+/* Backdrop */
+.swal2-container {
+  backdrop-filter: blur(4px) !important;
+}
+
+div.swal2-container.swal2-backdrop-show {
+  background: rgba(2, 6, 23, 0.65) !important;
+}
+
+/* Animations */
+@keyframes swal-premium-in {
+  0% { opacity: 0; transform: scale(0.9) translateY(12px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes swal-premium-out {
+  0% { opacity: 1; transform: scale(1) translateY(0); }
+  100% { opacity: 0; transform: scale(0.9) translateY(-8px); }
+}
+
+.swal-premium-show {
+  animation: swal-premium-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+.swal-premium-hide {
+  animation: swal-premium-out 0.2s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+}

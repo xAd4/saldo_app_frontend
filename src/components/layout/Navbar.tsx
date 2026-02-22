@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "../../hooks/useAppDispatch";
-import { logout } from "../../features/auth/slices/authSlice";
+import { onLogout as logout } from "../../features/auth/slices/authSlice";
 
 interface NavbarProps {
   onMenuToggle: () => void;

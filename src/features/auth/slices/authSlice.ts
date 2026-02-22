@@ -1,83 +1,96 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { User } from "../../../types";
 
+type AuthStatus = "checking" | "authenticated" | "not-authenticated";
+
 interface AuthState {
+  status: AuthStatus;
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
-  error: string | null;
+  isLoadingAuth: boolean;
+  errorMessage: string | null;
+  actualUser: User | null;
 }
 
 const initialState: AuthState = {
+  status: "not-authenticated",
   user: null,
   token: null,
   isAuthenticated: false,
-  isLoading: false,
-  error: null,
+  isLoadingAuth: false,
+  errorMessage: null,
+  actualUser: null,
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    loginStart(state) {
-      state.isLoading = true;
-      state.error = null;
+    onChecking(state) {
+      state.status = "checking";
+      state.errorMessage = null;
     },
-    loginSuccess(state, action: PayloadAction<{ user: User; token: string }>) {
-      state.isLoading = false;
-      state.isAuthenticated = true;
-      state.user = action.payload.user;
-      state.token = action.payload.token;
-      state.error = null;
+    onStartLoading(state) {
+      state.isLoadingAuth = true;
     },
-    loginFailure(state, action: PayloadAction<string>) {
-      state.isLoading = false;
-      state.isAuthenticated = false;
-      state.user = null;
-      state.token = null;
-      state.error = action.payload;
-    },
-    registerStart(state) {
-      state.isLoading = true;
-      state.error = null;
-    },
-    registerSuccess(
+    onLogin(
       state,
-      action: PayloadAction<{ user: User; token: string }>,
+      action: PayloadAction<{ user: User; access_token: string }>,
     ) {
-      state.isLoading = false;
+      state.status = "authenticated";
       state.isAuthenticated = true;
+      state.isLoadingAuth = false;
       state.user = action.payload.user;
-      state.token = action.payload.token;
-      state.error = null;
+      state.token = action.payload.access_token;
+      state.errorMessage = null;
     },
-    registerFailure(state, action: PayloadAction<string>) {
-      state.isLoading = false;
-      state.error = action.payload;
+    onRegister(
+      state,
+      action: PayloadAction<{ user: User; access_token: string }>,
+    ) {
+      state.status = "authenticated";
+      state.isAuthenticated = true;
+      state.isLoadingAuth = false;
+      state.user = action.payload.user;
+      state.token = action.payload.access_token;
+      state.errorMessage = null;
     },
-    logout(state) {
+    onLogout(state) {
+      state.status = "not-authenticated";
+      state.isAuthenticated = false;
+      state.isLoadingAuth = false;
       state.user = null;
       state.token = null;
-      state.isAuthenticated = false;
-      state.error = null;
+      state.errorMessage = null;
+      state.actualUser = null;
     },
-    clearError(state) {
-      state.error = null;
+    onAuthError(state, action: PayloadAction<string>) {
+      state.status = "not-authenticated";
+      state.isAuthenticated = false;
+      state.isLoadingAuth = false;
+      state.user = null;
+      state.token = null;
+      state.errorMessage = action.payload;
+    },
+    onPersistentUser(state, action: PayloadAction<User>) {
+      state.actualUser = action.payload;
+    },
+    onClearError(state) {
+      state.errorMessage = null;
     },
   },
 });
 
 export const {
-  loginStart,
-  loginSuccess,
-  loginFailure,
-  registerStart,
-  registerSuccess,
-  registerFailure,
-  logout,
-  clearError,
+  onChecking,
+  onStartLoading,
+  onLogin,
+  onRegister,
+  onLogout,
+  onAuthError,
+  onPersistentUser,
+  onClearError,
 } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -1,5 +1,5 @@
-import { NavLink, useLocation } from "react-router-dom";
-import { logout } from "../../features/auth/slices/authSlice";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { onLogout as logout } from "../../features/auth/slices/authSlice";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 
 interface SidebarProps {
@@ -94,9 +94,11 @@ const navSections = [
 export default function Sidebar({ isOpen, onClose, isCollapsed = false, onToggleCollapse }: SidebarProps) {
   const dispatch = useAppDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     dispatch(logout());
+    navigate("/login");
   };
 
   const sidebarWidth = isCollapsed ? 72 : 272;
