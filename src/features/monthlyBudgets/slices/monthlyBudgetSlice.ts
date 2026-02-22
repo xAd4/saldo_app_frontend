@@ -5,45 +5,41 @@ interface MonthlyBudgetState {
   budgets: MonthlyBudget[];
   activeBudget: MonthlyBudget | null;
   selectedBudget: MonthlyBudget | null;
-  isLoading: boolean;
-  error: string | null;
+  isLoadingBudgets: boolean;
+  errorMessage: string | null;
 }
 
 const initialState: MonthlyBudgetState = {
   budgets: [],
   activeBudget: null,
   selectedBudget: null,
-  isLoading: false,
-  error: null,
+  isLoadingBudgets: false,
+  errorMessage: null,
 };
 
 const monthlyBudgetSlice = createSlice({
   name: "monthlyBudgets",
   initialState,
   reducers: {
-    fetchBudgetsStart(state) {
-      state.isLoading = true;
-      state.error = null;
+    onStartLoading(state) {
+      state.isLoadingBudgets = true;
+      state.errorMessage = null;
     },
-    fetchBudgetsSuccess(state, action: PayloadAction<MonthlyBudget[]>) {
-      state.isLoading = false;
+    onLoadBudgets(state, action: PayloadAction<MonthlyBudget[]>) {
+      state.isLoadingBudgets = false;
       state.budgets = action.payload;
       state.activeBudget = action.payload.find((b) => b.is_active) || null;
     },
-    fetchBudgetsFailure(state, action: PayloadAction<string>) {
-      state.isLoading = false;
-      state.error = action.payload;
-    },
-    setSelectedBudget(state, action: PayloadAction<MonthlyBudget | null>) {
+    onSetSelectedBudget(state, action: PayloadAction<MonthlyBudget | null>) {
       state.selectedBudget = action.payload;
     },
-    addBudget(state, action: PayloadAction<MonthlyBudget>) {
+    onAddBudget(state, action: PayloadAction<MonthlyBudget>) {
       state.budgets.push(action.payload);
       if (action.payload.is_active) {
         state.activeBudget = action.payload;
       }
     },
-    updateBudget(state, action: PayloadAction<MonthlyBudget>) {
+    onUpdateBudget(state, action: PayloadAction<MonthlyBudget>) {
       const index = state.budgets.findIndex((b) => b.id === action.payload.id);
       if (index !== -1) {
         state.budgets[index] = action.payload;
@@ -52,7 +48,7 @@ const monthlyBudgetSlice = createSlice({
         state.activeBudget = action.payload;
       }
     },
-    closeBudget(state, action: PayloadAction<MonthlyBudget>) {
+    onCloseBudget(state, action: PayloadAction<MonthlyBudget>) {
       const index = state.budgets.findIndex((b) => b.id === action.payload.id);
       if (index !== -1) {
         state.budgets[index] = action.payload;
@@ -61,28 +57,32 @@ const monthlyBudgetSlice = createSlice({
         state.activeBudget = null;
       }
     },
-    removeBudget(state, action: PayloadAction<number>) {
+    onRemoveBudget(state, action: PayloadAction<number>) {
       state.budgets = state.budgets.filter((b) => b.id !== action.payload);
       if (state.activeBudget?.id === action.payload) {
         state.activeBudget = null;
       }
     },
-    clearError(state) {
-      state.error = null;
+    onBudgetError(state, action: PayloadAction<string>) {
+      state.isLoadingBudgets = false;
+      state.errorMessage = action.payload;
+    },
+    onClearBudgetError(state) {
+      state.errorMessage = null;
     },
   },
 });
 
 export const {
-  fetchBudgetsStart,
-  fetchBudgetsSuccess,
-  fetchBudgetsFailure,
-  setSelectedBudget,
-  addBudget,
-  updateBudget,
-  closeBudget,
-  removeBudget,
-  clearError,
+  onStartLoading,
+  onLoadBudgets,
+  onSetSelectedBudget,
+  onAddBudget,
+  onUpdateBudget,
+  onCloseBudget,
+  onRemoveBudget,
+  onBudgetError,
+  onClearBudgetError,
 } = monthlyBudgetSlice.actions;
 
 export default monthlyBudgetSlice.reducer;

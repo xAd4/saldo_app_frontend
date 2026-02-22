@@ -190,7 +190,7 @@ export default function DashboardPage() {
               <div className="flex justify-between items-center">
                 <span className="text-slate-400" style={{ fontSize: 14 }}>Ingreso planificado</span>
                 <span className="font-bold" style={{ fontSize: 20, color: '#34d399' }}>
-                  ${activeBudget.total_planned_income.toFixed(2)}
+                  ${Number(activeBudget.total_planned_income).toFixed(2)}
                 </span>
               </div>
               <div

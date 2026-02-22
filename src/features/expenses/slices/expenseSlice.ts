@@ -4,70 +4,70 @@ import type { Expense } from "../../../types";
 interface ExpenseState {
   expenses: Expense[];
   totalExpenses: number;
-  isLoading: boolean;
-  error: string | null;
+  isLoadingExpenses: boolean;
+  errorMessage: string | null;
 }
 
 const initialState: ExpenseState = {
   expenses: [],
   totalExpenses: 0,
-  isLoading: false,
-  error: null,
+  isLoadingExpenses: false,
+  errorMessage: null,
 };
 
 const expenseSlice = createSlice({
   name: "expenses",
   initialState,
   reducers: {
-    fetchExpensesStart(state) {
-      state.isLoading = true;
-      state.error = null;
+    onStartLoading(state) {
+      state.isLoadingExpenses = true;
+      state.errorMessage = null;
     },
-    fetchExpensesSuccess(state, action: PayloadAction<Expense[]>) {
-      state.isLoading = false;
+    onLoadExpenses(state, action: PayloadAction<Expense[]>) {
+      state.isLoadingExpenses = false;
       state.expenses = action.payload;
       state.totalExpenses = action.payload.reduce(
-        (sum, e) => sum + e.amount,
+        (sum, e) => sum + Number(e.amount),
         0,
       );
     },
-    fetchExpensesFailure(state, action: PayloadAction<string>) {
-      state.isLoading = false;
-      state.error = action.payload;
-    },
-    addExpense(state, action: PayloadAction<Expense>) {
+    onAddExpense(state, action: PayloadAction<Expense>) {
       state.expenses.push(action.payload);
-      state.totalExpenses += action.payload.amount;
+      state.totalExpenses += Number(action.payload.amount);
     },
-    updateExpense(state, action: PayloadAction<Expense>) {
+    onUpdateExpense(state, action: PayloadAction<Expense>) {
       const index = state.expenses.findIndex((e) => e.id === action.payload.id);
       if (index !== -1) {
-        state.totalExpenses -= state.expenses[index].amount;
+        state.totalExpenses -= Number(state.expenses[index].amount);
         state.expenses[index] = action.payload;
-        state.totalExpenses += action.payload.amount;
+        state.totalExpenses += Number(action.payload.amount);
       }
     },
-    removeExpense(state, action: PayloadAction<number>) {
+    onRemoveExpense(state, action: PayloadAction<number>) {
       const expense = state.expenses.find((e) => e.id === action.payload);
       if (expense) {
-        state.totalExpenses -= expense.amount;
+        state.totalExpenses -= Number(expense.amount);
       }
       state.expenses = state.expenses.filter((e) => e.id !== action.payload);
     },
-    clearError(state) {
-      state.error = null;
+    onExpenseError(state, action: PayloadAction<string>) {
+      state.isLoadingExpenses = false;
+      state.errorMessage = action.payload;
+    },
+    onClearExpenseError(state) {
+      state.errorMessage = null;
     },
   },
 });
 
 export const {
-  fetchExpensesStart,
-  fetchExpensesSuccess,
-  fetchExpensesFailure,
-  addExpense,
-  updateExpense,
-  removeExpense,
-  clearError,
+  onStartLoading,
+  onLoadExpenses,
+  onAddExpense,
+  onUpdateExpense,
+  onRemoveExpense,
+  onExpenseError,
+  onClearExpenseError,
 } = expenseSlice.actions;
 
 export default expenseSlice.reducer;

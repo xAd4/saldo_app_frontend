@@ -1,10 +1,19 @@
-import { useState } from "react";
-import { useAppSelector, useAppDispatch } from "../../../hooks/useAppDispatch";
-import { removeExpense } from "../slices/expenseSlice";
+import { useEffect, useState } from "react";
+import { useAppSelector } from "../../../hooks/useAppDispatch";
+import { useExpenseStore } from "../hooks/useExpenseStore";
+import { SwalCustom } from "../../../lib/utils/swal-custom";
+import type { Expense } from "../../../types";
 
 export default function ExpensesPage() {
-  const dispatch = useAppDispatch();
-  const { expenses, totalExpenses, isLoading } = useAppSelector((state) => state.expenses);
+  const {
+    expenses,
+    totalExpenses,
+    isLoadingExpenses,
+    startLoadingExpenses,
+    startSavingExpense,
+    startDeletingExpense,
+  } = useExpenseStore();
+
   const { categories } = useAppSelector((state) => state.budgetCategories);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -14,19 +23,51 @@ export default function ExpensesPage() {
     budget_category_id: "",
   });
 
+  useEffect(() => {
+    startLoadingExpenses();
+  }, [startLoadingExpenses]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Create expense:", formData);
-    setShowForm(false);
-    setFormData({ amount: "", description: "", occurred_at: "", budget_category_id: "" });
+
+    if (!formData.description.trim() || !formData.amount || !formData.budget_category_id) {
+      SwalCustom.error("Error", "Completa todos los campos requeridos.");
+      return;
+    }
+
+    try {
+      await startSavingExpense({
+        budget_category_id: Number(formData.budget_category_id),
+        amount: Number(formData.amount),
+        description: formData.description.trim(),
+      });
+
+      setShowForm(false);
+      setFormData({ amount: "", description: "", occurred_at: "", budget_category_id: "" });
+      await startLoadingExpenses();
+    } catch {
+      // Error handled in hook
+    }
   };
 
-  const handleDelete = (id: number) => {
-    dispatch(removeExpense(id));
+  const handleDelete = async (expense: Expense) => {
+    const result = await SwalCustom.confirm(
+      "¿Eliminar gasto?",
+      `Se eliminará el gasto "${expense.description}" de $${Number(expense.amount).toFixed(2)}.`,
+    );
+
+    if (result.isConfirmed) {
+      try {
+        await startDeletingExpense(expense);
+        await startLoadingExpenses();
+      } catch {
+        // Error handled in hook
+      }
+    }
   };
 
   const getCategoryName = (categoryId: number) => {
@@ -116,12 +157,6 @@ export default function ExpensesPage() {
                 {categories.map((cat) => (<option key={cat.id} value={cat.id}>{cat.name}</option>))}
               </select>
             </div>
-            <div>
-              <label htmlFor="occurred_at" className="block text-sm font-medium text-slate-300" style={{ marginBottom: 8 }}>Fecha</label>
-              <input id="occurred_at" name="occurred_at" type="date" value={formData.occurred_at} onChange={handleChange}
-                className="w-full rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all"
-                style={{ padding: '12px 16px', fontSize: 14, backgroundColor: 'rgba(30,41,59,0.5)', border: '1px solid rgba(255,255,255,0.08)' }} />
-            </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 24 }}>
             <button type="submit" className="rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-medium hover:from-emerald-400 hover:to-cyan-400 transition-all duration-300 shadow-lg shadow-emerald-500/20"
@@ -133,7 +168,7 @@ export default function ExpensesPage() {
       )}
 
       {/* List */}
-      {isLoading ? (
+      {isLoadingExpenses ? (
         <div className="flex items-center justify-center" style={{ padding: '80px 0' }}>
           <div className="w-10 h-10 rounded-full animate-spin" style={{ border: '2px solid rgba(239,68,68,0.2)', borderTopColor: '#f87171' }} />
         </div>
@@ -169,8 +204,8 @@ export default function ExpensesPage() {
                 </div>
               </div>
               <div className="flex items-center" style={{ gap: 12 }}>
-                <span className="font-bold" style={{ fontSize: 18, color: '#f87171' }}>-${expense.amount.toFixed(2)}</span>
-                <button onClick={() => handleDelete(expense.id)} className="rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all opacity-0 group-hover:opacity-100" style={{ padding: 8 }}>
+                <span className="font-bold" style={{ fontSize: 18, color: '#f87171' }}>-${Number(expense.amount).toFixed(2)}</span>
+                <button onClick={() => handleDelete(expense)} className="rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all opacity-0 group-hover:opacity-100" style={{ padding: 8 }}>
                   <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                   </svg>

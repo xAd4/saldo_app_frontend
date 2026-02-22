@@ -3,41 +3,40 @@ import type { BudgetCategory } from "../../../types";
 
 interface BudgetCategoryState {
   categories: BudgetCategory[];
-  selectedCategory: BudgetCategory | null;
-  isLoading: boolean;
-  error: string | null;
+  activeCategory: BudgetCategory | null;
+  isLoadingCategories: boolean;
+  errorMessage: string | null;
 }
 
 const initialState: BudgetCategoryState = {
   categories: [],
-  selectedCategory: null,
-  isLoading: false,
-  error: null,
+  activeCategory: null,
+  isLoadingCategories: false,
+  errorMessage: null,
 };
 
 const budgetCategorySlice = createSlice({
   name: "budgetCategories",
   initialState,
   reducers: {
-    fetchCategoriesStart(state) {
-      state.isLoading = true;
-      state.error = null;
+    onStartLoading(state) {
+      state.isLoadingCategories = true;
+      state.errorMessage = null;
     },
-    fetchCategoriesSuccess(state, action: PayloadAction<BudgetCategory[]>) {
-      state.isLoading = false;
+    onLoadCategories(state, action: PayloadAction<BudgetCategory[]>) {
+      state.isLoadingCategories = false;
       state.categories = action.payload;
     },
-    fetchCategoriesFailure(state, action: PayloadAction<string>) {
-      state.isLoading = false;
-      state.error = action.payload;
+    onSetActiveCategory(
+      state,
+      action: PayloadAction<BudgetCategory | null>,
+    ) {
+      state.activeCategory = action.payload;
     },
-    setSelectedCategory(state, action: PayloadAction<BudgetCategory | null>) {
-      state.selectedCategory = action.payload;
-    },
-    addCategory(state, action: PayloadAction<BudgetCategory>) {
+    onAddCategory(state, action: PayloadAction<BudgetCategory>) {
       state.categories.push(action.payload);
     },
-    updateCategory(state, action: PayloadAction<BudgetCategory>) {
+    onUpdateCategory(state, action: PayloadAction<BudgetCategory>) {
       const index = state.categories.findIndex(
         (c) => c.id === action.payload.id,
       );
@@ -45,26 +44,30 @@ const budgetCategorySlice = createSlice({
         state.categories[index] = action.payload;
       }
     },
-    removeCategory(state, action: PayloadAction<number>) {
+    onRemoveCategory(state, action: PayloadAction<number>) {
       state.categories = state.categories.filter(
         (c) => c.id !== action.payload,
       );
     },
-    clearError(state) {
-      state.error = null;
+    onCategoryError(state, action: PayloadAction<string>) {
+      state.isLoadingCategories = false;
+      state.errorMessage = action.payload;
+    },
+    onClearCategoryError(state) {
+      state.errorMessage = null;
     },
   },
 });
 
 export const {
-  fetchCategoriesStart,
-  fetchCategoriesSuccess,
-  fetchCategoriesFailure,
-  setSelectedCategory,
-  addCategory,
-  updateCategory,
-  removeCategory,
-  clearError,
+  onStartLoading,
+  onLoadCategories,
+  onSetActiveCategory,
+  onAddCategory,
+  onUpdateCategory,
+  onRemoveCategory,
+  onCategoryError,
+  onClearCategoryError,
 } = budgetCategorySlice.actions;
 
 export default budgetCategorySlice.reducer;

@@ -1,12 +1,18 @@
-import { useState } from "react";
-import { useAppSelector, useAppDispatch } from "../../../hooks/useAppDispatch";
-import { removeIncome } from "../slices/incomeSlice";
+import { useEffect, useState } from "react";
+import { useIncomeStore } from "../hooks/useIncomeStore";
+import { SwalCustom } from "../../../lib/utils/swal-custom";
+import type { Income } from "../../../types";
 
 export default function IncomesPage() {
-  const dispatch = useAppDispatch();
-  const { incomes, totalIncome, isLoading } = useAppSelector(
-    (state) => state.incomes,
-  );
+  const {
+    incomes,
+    totalIncome,
+    isLoadingIncomes,
+    startLoadingIncomes,
+    startSavingIncome,
+    startDeletingIncome,
+  } = useIncomeStore();
+
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     amount: "",
@@ -15,19 +21,52 @@ export default function IncomesPage() {
     monthly_budget_id: "",
   });
 
+  useEffect(() => {
+    startLoadingIncomes();
+  }, [startLoadingIncomes]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Create income:", formData);
-    setShowForm(false);
-    setFormData({ amount: "", source: "", received_at: "", monthly_budget_id: "" });
+
+    if (!formData.source.trim() || !formData.amount || !formData.received_at) {
+      SwalCustom.error("Error", "Completa todos los campos requeridos.");
+      return;
+    }
+
+    try {
+      await startSavingIncome({
+        monthly_budget_id: formData.monthly_budget_id ? Number(formData.monthly_budget_id) : undefined,
+        amount: Number(formData.amount),
+        source: formData.source.trim(),
+        received_at: formData.received_at,
+      });
+
+      setShowForm(false);
+      setFormData({ amount: "", source: "", received_at: "", monthly_budget_id: "" });
+      await startLoadingIncomes();
+    } catch {
+      // Error handled in hook
+    }
   };
 
-  const handleDelete = (id: number) => {
-    dispatch(removeIncome(id));
+  const handleDelete = async (income: Income) => {
+    const result = await SwalCustom.confirm(
+      "¿Eliminar ingreso?",
+      `Se eliminará el ingreso "${income.source}" de $${Number(income.amount).toFixed(2)}.`,
+    );
+
+    if (result.isConfirmed) {
+      try {
+        await startDeletingIncome(income);
+        await startLoadingIncomes();
+      } catch {
+        // Error handled in hook
+      }
+    }
   };
 
   return (
@@ -128,7 +167,7 @@ export default function IncomesPage() {
       )}
 
       {/* List */}
-      {isLoading ? (
+      {isLoadingIncomes ? (
         <div className="flex items-center justify-center" style={{ padding: '80px 0' }}>
           <div className="w-10 h-10 rounded-full animate-spin" style={{ border: '2px solid rgba(16,185,129,0.2)', borderTopColor: '#34d399' }} />
         </div>
@@ -173,9 +212,9 @@ export default function IncomesPage() {
                 </div>
               </div>
               <div className="flex items-center" style={{ gap: 12 }}>
-                <span className="font-bold" style={{ fontSize: 18, color: '#34d399' }}>+${income.amount.toFixed(2)}</span>
+                <span className="font-bold" style={{ fontSize: 18, color: '#34d399' }}>+${Number(income.amount).toFixed(2)}</span>
                 <button
-                  onClick={() => handleDelete(income.id)}
+                  onClick={() => handleDelete(income)}
                   className="rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all opacity-0 group-hover:opacity-100"
                   style={{ padding: 8 }}
                 >
