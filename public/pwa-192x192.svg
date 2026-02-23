@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399"/>
+      <stop offset="50%" style="stop-color:#2dd4bf"/>
+      <stop offset="100%" style="stop-color:#22d3ee"/>
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:rgba(52,211,153,0.15)"/>
+      <stop offset="100%" style="stop-color:rgba(34,211,238,0.15)"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" fill="#020617"/>
+  <circle cx="96" cy="96" r="73" fill="url(#bgGrad)"/>
+  <text x="96" y="104" font-family="Inter, Segoe UI, system-ui, sans-serif" font-size="100" font-weight="bold" fill="url(#textGrad)" text-anchor="middle" dominant-baseline="middle">S</text>
+</svg>

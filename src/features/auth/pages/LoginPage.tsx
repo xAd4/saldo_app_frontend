@@ -55,11 +55,17 @@ export default function LoginPage() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(2,6,23,0.5)_70%,rgba(2,6,23,0.9)_100%)]" />
 
       {/* ===== Content ===== */}
-      <div className="relative z-10" style={{ width: '100%', maxWidth: 460 }}>
+      <div className="relative z-10" style={{ width: "100%", maxWidth: 460 }}>
         {/* Logo & Header */}
-        <div className="text-center animate-fade-in-up" style={{ marginBottom: 48 }}>
+        <div
+          className="text-center animate-fade-in-up"
+          style={{ marginBottom: 48 }}
+        >
           {/* Animated Logo */}
-          <div className="relative inline-flex items-center justify-center" style={{ marginBottom: 24 }}>
+          <div
+            className="relative inline-flex items-center justify-center"
+            style={{ marginBottom: 24 }}
+          >
             {/* Rotating gradient ring */}
             <div className="absolute w-20 h-20 rounded-2xl animate-gradient-rotate">
               <div className="w-full h-full rounded-2xl bg-[conic-gradient(from_0deg,#34d399,#06b6d4,#a78bfa,#34d399)] opacity-60 blur-sm" />
@@ -82,7 +88,14 @@ export default function LoginPage() {
                   d="M6 16H26V20C26 22.21 24.21 24 22 24H10C7.79 24 6 22.21 6 20V16Z"
                   fill="currentColor"
                 />
-                <rect x="11" y="18" width="10" height="2" rx="1" fill="rgba(255,255,255,0.4)" />
+                <rect
+                  x="11"
+                  y="18"
+                  width="10"
+                  height="2"
+                  rx="1"
+                  fill="rgba(255,255,255,0.4)"
+                />
               </svg>
             </div>
           </div>
@@ -103,11 +116,23 @@ export default function LoginPage() {
           <form
             onSubmit={handleSubmit}
             className="relative backdrop-blur-2xl rounded-3xl shadow-[0_8px_64px_rgba(0,0,0,0.4)]"
-            style={{ padding: '48px 40px', backgroundColor: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.08)' }}
+            style={{
+              padding: "48px 40px",
+              backgroundColor: "rgba(15, 23, 42, 0.8)",
+              border: "1px solid rgba(255,255,255,0.08)",
+            }}
           >
             {/* Error message */}
             {errorMessage && (
-              <div className="rounded-2xl flex items-start gap-3" style={{ marginBottom: 32, padding: 16, backgroundColor: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.15)' }}>
+              <div
+                className="rounded-2xl flex items-start gap-3"
+                style={{
+                  marginBottom: 32,
+                  padding: 16,
+                  backgroundColor: "rgba(239,68,68,0.08)",
+                  border: "1px solid rgba(239,68,68,0.15)",
+                }}
+              >
                 <svg
                   className="w-5 h-5 text-red-400 shrink-0 mt-0.5"
                   fill="none"
@@ -127,7 +152,7 @@ export default function LoginPage() {
               </div>
             )}
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
               {/* Email field */}
               <div className="group">
                 <label
@@ -163,7 +188,14 @@ export default function LoginPage() {
                     onChange={handleChange}
                     placeholder="tu@email.com"
                     className="w-full rounded-xl text-white placeholder-slate-500 text-[15px] focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all duration-300"
-                    style={{ paddingLeft: 48, paddingRight: 16, paddingTop: 14, paddingBottom: 14, backgroundColor: 'rgba(30,41,59,0.5)', border: '1px solid rgba(255,255,255,0.08)' }}
+                    style={{
+                      paddingLeft: 48,
+                      paddingRight: 16,
+                      paddingTop: 14,
+                      paddingBottom: 14,
+                      backgroundColor: "rgba(30,41,59,0.5)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                    }}
                   />
                 </div>
               </div>
@@ -203,14 +235,23 @@ export default function LoginPage() {
                     onChange={handleChange}
                     placeholder="••••••••"
                     className="w-full rounded-xl text-white placeholder-slate-500 text-[15px] focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40 transition-all duration-300"
-                    style={{ paddingLeft: 48, paddingRight: 48, paddingTop: 14, paddingBottom: 14, backgroundColor: 'rgba(30,41,59,0.5)', border: '1px solid rgba(255,255,255,0.08)' }}
+                    style={{
+                      paddingLeft: 48,
+                      paddingRight: 48,
+                      paddingTop: 14,
+                      paddingBottom: 14,
+                      backgroundColor: "rgba(30,41,59,0.5)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                    }}
                   />
                   {/* Toggle password visibility */}
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
-                    aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                    aria-label={
+                      showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+                    }
                   >
                     {showPassword ? (
                       <svg
@@ -254,7 +295,10 @@ export default function LoginPage() {
             </div>
 
             {/* Remember me + Forgot password */}
-            <div className="flex items-center justify-between" style={{ marginTop: 28 }}>
+            <div
+              className="flex items-center justify-between"
+              style={{ marginTop: 28 }}
+            >
               <label className="flex items-center gap-2.5 cursor-pointer group/check">
                 <div className="relative">
                   <input
@@ -299,7 +343,7 @@ export default function LoginPage() {
               type="submit"
               disabled={isLoadingAuth}
               className="relative w-full rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white font-semibold text-[15px] hover:from-emerald-400 hover:via-teal-400 hover:to-cyan-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-emerald-500/20 hover:shadow-xl hover:shadow-emerald-500/30 hover:-translate-y-0.5 active:translate-y-0 overflow-hidden group/btn"
-              style={{ marginTop: 32, padding: '16px 16px' }}
+              style={{ marginTop: 32, padding: "16px 16px" }}
             >
               {/* Shimmer effect on hover */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover/btn:opacity-100 group-hover/btn:animate-shimmer bg-[length:200%_100%] transition-opacity duration-300" />
@@ -353,7 +397,10 @@ export default function LoginPage() {
             </button>
 
             {/* Divider */}
-            <div className="flex items-center" style={{ gap: 16, marginTop: 28, marginBottom: 28 }}>
+            <div
+              className="flex items-center"
+              style={{ gap: 16, marginTop: 28, marginBottom: 28 }}
+            >
               <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
               <span className="text-xs text-slate-500 uppercase tracking-widest font-medium">
                 o
@@ -365,7 +412,12 @@ export default function LoginPage() {
             <button
               type="button"
               className="w-full rounded-xl text-slate-300 text-sm font-medium hover:bg-white/[0.06] transition-all duration-300 flex items-center justify-center"
-              style={{ padding: '14px 16px', gap: 12, backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+              style={{
+                padding: "14px 16px",
+                gap: 12,
+                backgroundColor: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(255,255,255,0.06)",
+              }}
             >
               <svg width="18" height="18" viewBox="0 0 24 24">
                 <path
@@ -389,7 +441,10 @@ export default function LoginPage() {
             </button>
 
             {/* Register link */}
-            <p className="text-center text-sm text-slate-400" style={{ marginTop: 32 }}>
+            <p
+              className="text-center text-sm text-slate-400"
+              style={{ marginTop: 32 }}
+            >
               ¿No tienes cuenta?{" "}
               <Link
                 to="/register"
@@ -402,7 +457,10 @@ export default function LoginPage() {
         </div>
 
         {/* Footer text */}
-        <p className="text-center text-xs text-slate-600 animate-fade-in-up-delay-3" style={{ marginTop: 40 }}>
+        <p
+          className="text-center text-xs text-slate-600 animate-fade-in-up-delay-3"
+          style={{ marginTop: 40 }}
+        >
           Protegido con encriptación de extremo a extremo
           <span className="inline-flex items-center ml-1.5 align-middle">
             <svg
